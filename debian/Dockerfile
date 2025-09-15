@@ -1,8 +1,6 @@
-FROM mysql:8.4.1
+FROM postgres:17.6 AS builder
 
 LABEL maintainer="Longjianghu <215241062@qq.com>"
-
-FROM postgres:17.6 AS builder
 
 # Install dependencies for building zhparser
 RUN apt-get update && apt-get install -y \
@@ -34,10 +32,18 @@ RUN git clone https://github.com/amutu/zhparser.git \
 # Create minimal image
 FROM postgres:17.6
 
+# Set timezone to East China (UTC+8)
+ENV TZ=Asia/Shanghai
+
 # Install runtime dependencies for zhparser
 RUN apt-get update && apt-get install -y \
     libcurl4t64 \
+    tzdata \
     && rm -rf /var/lib/apt/lists/*
+
+# Set timezone
+RUN ln -sf /usr/share/zoneinfo/$TZ /etc/localtime \
+    && echo $TZ > /etc/timezone
 
 # Copy built files from builder stage
 COPY --from=builder /usr/local/lib/libscws.so.1.1.0 /usr/local/lib/

@@ -1,8 +1,6 @@
-FROM mysql:8.4.1
+FROM postgres:17.6-alpine3.22 AS builder
 
 LABEL maintainer="Longjianghu <215241062@qq.com>"
-
-FROM postgres:17.6-alpine3.22 AS builder
 
 # Install build dependencies
 RUN apk add --no-cache \
@@ -34,9 +32,13 @@ RUN git clone https://github.com/amutu/zhparser.git \
 # Create minimal image
 FROM postgres:17.6-alpine3.22
 
+# Set timezone to East China (UTC+8)
+ENV TZ=Asia/Shanghai
+
 # Install runtime dependencies
 RUN apk add --no-cache \
-    curl
+    curl \
+    tzdata
 
 # Copy built files from builder stage
 COPY --from=builder /usr/lib/libscws.so.1.1.0 /usr/lib/
@@ -51,6 +53,10 @@ COPY --from=builder /usr/local/share/postgresql/tsearch_data/rules.utf8.ini /usr
 # Create symlinks for libscws
 RUN ln -sf /usr/lib/libscws.so.1.1.0 /usr/lib/libscws.so.1 \
     && ln -sf /usr/lib/libscws.so.1.1.0 /usr/lib/libscws.so
+
+# Set timezone
+RUN ln -sf /usr/share/zoneinfo/$TZ /etc/localtime \
+    && echo $TZ > /etc/timezone
 
 # Copy entrypoint script to initialize zhparser
 COPY init-zhparser.sh /docker-entrypoint-initdb.d/
