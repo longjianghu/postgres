@@ -1,3 +1,7 @@
+FROM mysql:8.4.1
+
+LABEL maintainer="Longjianghu <215241062@qq.com>"
+
 FROM postgres:17.6-alpine3.22 AS builder
 
 # Install build dependencies
