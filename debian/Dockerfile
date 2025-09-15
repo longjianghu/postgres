@@ -53,4 +53,4 @@ RUN ln -sf /usr/local/lib/libscws.so.1.1.0 /usr/local/lib/libscws.so.1 \
 RUN ldconfig
 
 # Copy entrypoint script to initialize zhparser
-COPY ./init-zhparser.sh /docker-entrypoint-initdb.d/init-zhparser.sh
+COPY init-zhparser.sh /docker-entrypoint-initdb.d/
