@@ -18,4 +18,3 @@
 - [PostgreSQL官方文档](https://www.postgresql.org/docs/)
 - [zhparser GitHub仓库](https://github.com/amutu/zhparser)
 - [SCWS官方网站](http://www.xunsearch.com/scws/)
-- [Docker Hub PostgreSQL](https://hub.docker.com/_/postgres)
